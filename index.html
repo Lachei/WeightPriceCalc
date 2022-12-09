@@ -156,7 +156,9 @@ function price_div(price, grams){
 function input_number(x){
 	let price_string = selected == 'p' ? cur_price: cur_grams;
 	if(x == 'e'){
-		document.getElementById("left").innerHTML += price_div(cur_price, cur_grams);
+		let el = document.getElementById("left");
+		el.innerHTML += price_div(cur_price, cur_grams);
+		el.scrollTo(0, el.scrollHeight);
 		cur_grams = "";
 		price_string = "";
 		document.getElementById("cur_gram").innerHTML  = cur_grams + " g";
