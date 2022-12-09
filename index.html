@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html{
+	height: 95%;
+}
+body{
+	height: 100%;
+	font-size: 400%;
+	font-family: Arial;
+}
+pre{
+	padding: 0px;
+	margin: 0px;
+}
+#main{
+	width: 98%;
+	height: 100%;
+	display: grid;
+	grid-template-rows: repeat(5, 20%);
+	grid-template-columns: 30% 25% 15% 15% 15%;
+	grid-template-areas: "left cur_gram seven eight nine" "left price_kg four five six" "left middle one two three" "left middle zero zero dot" "sum middle back enter enter";
+	row-gap: 5px;
+	column-gap: 5px;
+}
+#left{
+	grid-area: left;
+	border-style: solid;
+	border-color: gray;
+	display: inline-block;
+	overflow-y:scroll;
+}
+#cur_gram{
+	grid-area: cur_gram;
+}
+#price_kg{
+	grid-area: price_kg;
+}
+#middle{
+	grid-area: middle;
+}
+#zero{
+	grid-area: zero;
+}
+#one{
+	grid-area: one;
+}
+#two{
+	grid-area: two;
+}
+#three{
+	grid-area: three;
+}
+#four{
+	grid-area: four;
+}
+#five{
+	grid-area: five;
+}
+#six{
+	grid-area: six;
+}
+#seven{
+	grid-area: seven;
+}
+#eight{
+	grid-area: eight;
+}
+#nine{
+	grid-area: nine;
+}
+#dot{
+	grid-area: dot;
+}
+#back{
+	grid-area: back;
+	background-color: tomato;
+}
+#back:hover{
+	background-color: red;
+}
+#enter{
+	grid-area: enter;
+	background-color: lightgreen;
+}
+#enter:hover{
+	background-color: green;
+}
+.number{
+	text-align: center;
+	background-color: lightgray;
+	cursor: pointer;
+	-webkit-user-select: none; /* Safari */
+	-ms-user-select: none; /* IE 10 and IE 11 */
+	user-select: none; /* Standard syntax */
+}
+.number:hover {
+	background-color: gray;
+}
+.price_select{
+	background-color: lightgray;
+	cursor: pointer;
+}
+.price_select:hover {
+	background-color: lightblue;
+}
+.selected{
+	border-style: solid;
+	border-color: blue;
+	border-width: 4px;
+}
+.price_el{
+	background-color: lightgray;
+	font-size: 50%;
+	text-align: right;
+	margin-bottom: 5px;
+	cursor: pointer;
+}
+.price_el:hover{
+	background-color: gray;
+}
+#sum{
+	text-align: right;
+}
+</style>
+<script>
+let selected = 'p';
+let cur_price = "";
+let cur_grams = "";
+let cur_id = 0;
+let total_cost = 0;
+
+function remove(id){
+	test = document.getElementById("" + id).innerHTML.slice(-14, -7)
+	price = Number(document.getElementById("" + id).innerHTML.slice(-14, -7));
+	document.getElementById("" + id).remove();
+	total_cost -= price;
+	document.getElementById("sum").innerHTML = "Tot: " + total_cost.toFixed(2) + "€"; 
+}
+
+function price_div(price, grams){
+	total = Number(price) / 1000 * Number(grams);
+	if(typeof total != "number" || total == 0)
+		return "";
+		
+	total = Math.round(total * 10) / 10;
+	
+	div = "<div id = \"" + cur_id + "\" class = \"price_el\" onclick = \"remove(" + cur_id++ + ")\"> <pre>" + grams + "g * " + price + "€/kg =" + ("     " + total.toFixed(2)).slice(-7) + "€</pre></div>";
+	total_cost += total;
+	document.getElementById("sum").innerHTML = "Tot: " + total_cost.toFixed(2) + "€"; 
+	return div;
+}
+
+function input_number(x){
+	let price_string = selected == 'p' ? cur_price: cur_grams;
+	if(x == 'e'){
+		document.getElementById("left").innerHTML += price_div(cur_price, cur_grams);
+		cur_grams = "";
+		price_string = "";
+		document.getElementById("cur_gram").innerHTML  = cur_grams + " g";
+	}
+	else if(x == 'b'){
+		if(price_string.length > 0)
+			price_string = price_string.substring(0, price_string.length - 1);
+	}
+	else{
+		price_string += x;
+	}
+	
+	if(selected == 'p'){
+		cur_price = price_string;
+		document.getElementById("price_kg").innerHTML  = cur_price + " €/kg";
+	}
+	else{
+		cur_grams = price_string;
+		document.getElementById("cur_gram").innerHTML  = cur_grams + " g";
+	}
+}
+
+function select(e){
+	if(e == 'g'){
+		let grams = document.getElementById("cur_gram");
+		let price = document.getElementById("price_kg");
+		grams.classList.add("selected");
+		price.classList.remove("selected");
+	}
+	else if(e == 'p'){
+		let grams = document.getElementById("cur_gram");
+		let price = document.getElementById("price_kg");
+		price.classList.add("selected");
+		grams.classList.remove("selected");
+	}
+	selected = e;
+}
+
+document.addEventListener('keydown', (event) => {
+	const key_name = event.key;
+	if(key_name == "Enter")
+		input_number('e');
+	else if(key_name == "Backspace")
+		input_number('b');
+	else if(key_name >= '0' && key_name <= '9')
+		input_number(key_name);
+	else if(key_name == "ArrowUp")
+		select('g');
+	else if(key_name == "ArrowDown")
+		select('p');
+ })
+</script>
+<title>Mengenrechner</title>
+</head>
+<body>
+<div id = "main">
+	<div id = "left">
+	
+	</div>
+	<div id = "sum">
+	Tot: 0.00€
+	</div>
+	<div id = "cur_gram" class = "price_select" onclick = "select('g')">
+	g
+	</div>
+	<div id = "price_kg" class = "price_select selected" onclick = "select('p')">
+	€/kg
+	</div>
+	<div id = "middle">
+	
+	</div>
+	<div id = "zero" class = "number" onclick = "input_number(0)">
+	0
+	</div>
+	<div  id = "one" class = "number" onclick = "input_number(1)">
+	1
+	</div>
+	<div id = "two" class = "number" onclick = "input_number(2)">
+	2
+	</div>
+	<div id = "three" class = "number" onclick = "input_number(3)">
+	3
+	</div>
+	<div id = "four" class = "number" onclick = "input_number(4)">
+	4
+	</div>
+	<div id = "five" class = "number" onclick = "input_number(5)">
+	5
+	</div>
+	<div id = "six" class = "number" onclick = "input_number(6)">
+	6
+	</div>
+	<div id = "seven" class = "number" onclick = "input_number(7)">
+	7
+	</div>
+	<div id = "eight" class = "number" onclick = "input_number(8)">
+	8
+	</div>
+	<div id = "nine" class = "number" onclick = "input_number(9)">
+	9
+	</div>
+	<div id = "dot" class = "number" onclick = "input_number('.')">
+	.
+	</div>
+	<div id = "back" class = "number" onclick = "input_number('b')">
+	X
+	</div>
+	<div id = "enter" class = "number" onclick = "input_number('e')">
+	ENTER
+	</div>
+</div>
+</body>
+</html>
