@@ -39,6 +39,7 @@ pre{
 }
 #middle{
 	grid-area: middle;
+	align-self: end;
 }
 #zero{
 	grid-area: zero;
@@ -102,6 +103,7 @@ pre{
 .price_select{
 	background-color: lightgray;
 	cursor: pointer;
+	text-align: right;
 }
 .price_select:hover {
 	background-color: lightblue;
@@ -124,30 +126,97 @@ pre{
 #sum{
 	text-align: right;
 }
+.lbl-toggle {
+    display: block;
+    
+    padding: .5rem;
+  
+    background: #5b84ff;
+  
+    cursor: pointer;
+  
+    border-radius: 7px;
+    transition: all 0.25s ease-out;
+}
+  
+.lbl-toggle:hover {
+    background-color: #1e37b3;
+}
+
+.lbl-toggle::before {
+    content: ' ';
+    display: inline-block;
+  
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid currentColor;
+  
+    vertical-align: middle;
+    margin-right: .7rem;
+    transform: translateY(-2px);
+  
+    transition: transform .2s ease-out;
+}
+
+.collapsible-content{
+    background: rgb(191, 217, 255);
+    border-bottom: 1px solid rgb(165, 210, 255);
+  
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    padding: 0rem 1rem;
+    max-height: 0px;
+    overflow: scroll;
+	font-size: 20%;
+
+    transition: max-height .25s ease-in-out;
+}
+
+.toggle{
+    display: none;
+}
+
+.toggle:checked + .lbl-toggle + .collapsible-content {
+    max-height: 30vh;
+}
+
+.toggle:checked + .lbl-toggle::before {
+    transform: rotate(90deg) translateX(-3px);
+}
+  
+.toggle:checked + .lbl-toggle {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
 </style>
 <script>
 let selected = 'p';
+let price_types = ["st|€/st", "g|€/kg", "kg|€/kg", "h|€/h"];
+let price_type = price_types[0];
 let cur_price = "";
 let cur_grams = "";
 let cur_id = 0;
 let total_cost = 0;
 
 function remove(id){
-	test = document.getElementById("" + id).innerHTML.slice(-14, -7)
-	price = Number(document.getElementById("" + id).innerHTML.slice(-14, -7));
+	test = document.getElementById("" + id);
+	price = test.attributes.total_price.nodeValue;
 	document.getElementById("" + id).remove();
 	total_cost -= price;
 	document.getElementById("sum").innerHTML = "Tot: " + total_cost.toFixed(2) + "€"; 
 }
 
 function price_div(price, grams){
-	total = Number(price) / 1000 * Number(grams);
+	total = Number(price) * Number(grams);
 	if(typeof total != "number" || total == 0)
 		return "";
 		
-	total = Math.round(total * 10) / 10;
+	if(document.getElementById("round").checked)
+		total = Math.round(total * 10) / 10;
 	
-	div = "<div id = \"" + cur_id + "\" class = \"price_el\" onclick = \"remove(" + cur_id++ + ")\"> <pre>" + grams + "g * " + price + "€/kg =" + ("     " + total.toFixed(2)).slice(-7) + "€</pre></div>";
+	entity = price_type.split("|")[0];
+	price_entity = price_type.split("|")[1];
+	div = "<div id = \"" + cur_id + "\" class = \"price_el\" onclick = \"remove(" + cur_id++ + ")\" amount = " + grams + " price = " + price + " total_price = " + total + " price_type = " + price_type + "> <pre>" + grams + " " + entity +  " * " + price + " " + price_entity + " =" + ("     " + total.toFixed(2)).slice(-7) + "€</pre></div>";
 	total_cost += total;
 	document.getElementById("sum").innerHTML = "Tot: " + total_cost.toFixed(2) + "€"; 
 	return div;
@@ -159,9 +228,16 @@ function input_number(x){
 		let el = document.getElementById("left");
 		el.innerHTML += price_div(cur_price, cur_grams);
 		el.scrollTo(0, el.scrollHeight);
-		cur_grams = "";
-		price_string = "";
-		document.getElementById("cur_gram").innerHTML  = cur_grams + " g";
+		if(document.getElementById("clear_entity").checked){
+			price_string = "";
+			cur_grams = "";
+			document.getElementById("cur_gram").innerHTML  = cur_grams + " " + price_type.split("|")[0];
+		}
+		if(document.getElementById("clear_price").checked){
+			price_string = "";
+			cur_price = "";
+			document.getElementById("price_kg").innerHTML = cur_price + " " + price_type.split("|")[1];
+		}
 	}
 	else if(x == 'b'){
 		if(price_string.length > 0)
@@ -173,11 +249,11 @@ function input_number(x){
 	
 	if(selected == 'p'){
 		cur_price = price_string;
-		document.getElementById("price_kg").innerHTML  = cur_price + " €/kg";
+		document.getElementById("price_kg").innerHTML  = cur_price + " " + price_type.split("|")[1];
 	}
 	else{
 		cur_grams = price_string;
-		document.getElementById("cur_gram").innerHTML  = cur_grams + " g";
+		document.getElementById("cur_gram").innerHTML  = cur_grams + " " + price_type.split("|")[0];
 	}
 }
 
@@ -203,6 +279,8 @@ document.addEventListener('keydown', (event) => {
 		input_number('e');
 	else if(key_name == "Backspace")
 		input_number('b');
+	else if(key_name == ',' || key_name == '.')
+		input_number(".");
 	else if(key_name >= '0' && key_name <= '9')
 		input_number(key_name);
 	else if(key_name == "ArrowUp")
@@ -222,13 +300,34 @@ document.addEventListener('keydown', (event) => {
 	Tot: 0.00€
 	</div>
 	<div id = "cur_gram" class = "price_select" onclick = "select('g')">
-	g
+	st
 	</div>
 	<div id = "price_kg" class = "price_select selected" onclick = "select('p')">
-	€/kg
+	€/st
 	</div>
-	<div id = "middle">
-	
+	<div id = "middle" class>
+		<input type = "checkbox" id="menu_header" class = "toggle"><label for="menu_header" class = "lbl-toggle">
+			Men&uuml;/Settings
+		</label>
+		<div class="collapsible-content">
+			<select name = "price typ" id = "price_type">
+				<option value = "st|€/st" selected="selected">st|€/st</option>
+				<option value = "g|€/kg">g|€/kg</option>
+				<option value = "kg|€/kg">kg|€/kg</option>
+				<option value = "h|€/h">h|€/h</option>
+			</select><label for="price_type">Preis Typ</label> <br>
+			<input type = "checkbox" id = "clear_entity" checked>
+			<label for = "clear_entity">Anzahl automatisch l&ouml;schen</label> <br>
+			<input type = "checkbox" id = "clear_price" checked>
+			<label for = "clear_price">Preis automatisch l&ouml;schen</label> <br>
+			<input type = "checkbox" id = "round" checked>
+			<label for = "round">Runden</label> <br>
+
+			Pdf erstellen:<br>
+			<input type = "text" id = "title" value = "test">
+			<label for = "title">Titel</label> <br>
+			<button type = "button">Erstellen</button>
+		</div>
 	</div>
 	<div id = "zero" class = "number" onclick = "input_number(0)">
 	0
