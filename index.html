@@ -242,6 +242,7 @@ function input_number(x){
 			document.getElementById("price_kg").innerHTML = cur_price + " " + price_type.split("|")[1];
 		}
 		price_string = selected == 'p' ? cur_price: cur_grams;
+		select(document.getElementById("default_select").value);
 	}
 	else if(x == 'b'){
 		if(price_string.length > 0)
@@ -274,6 +275,8 @@ function select(e){
 		price.classList.add("selected");
 		grams.classList.remove("selected");
 	}
+	else
+		return;
 	selected = e;
 }
 
@@ -320,12 +323,22 @@ document.addEventListener('keydown', (event) => {
 			Men&uuml;/Settings
 		</label>
 		<div class="collapsible-content">
+			<select id = "predone_settings">
+				<option value="inventur">Inventur</option>
+				<option value="markt">Christkindlmarkt</option>
+			</select><label for = "predone_settings">Voreinstellungen</label>
+			<hr>
 			<select name = "price typ" id = "price_type" onchange = "price_type_change(this.value)">
 				<option value = "st|€/st" selected="selected">st|€/st</option>
 				<option value = "g|€/kg">g|€/kg</option>
 				<option value = "kg|€/kg">kg|€/kg</option>
 				<option value = "h|€/h">h|€/h</option>
 			</select><label for="price_type">Preis Typ</label> <br>
+			<select name = "default select" id = "default_select">
+				<option value = "n">keine</option>
+				<option value = "g">stueckzahl</option>
+				<option value = "p" selected>preis</option>
+			</select><label for="default_select">Standard Eingabe</label> <br>
 			<input type = "checkbox" id = "clear_entity" checked>
 			<label for = "clear_entity">Anzahl automatisch l&ouml;schen</label> <br>
 			<input type = "checkbox" id = "clear_price" checked>
@@ -333,6 +346,7 @@ document.addEventListener('keydown', (event) => {
 			<input type = "checkbox" id = "round">
 			<label for = "round">Runden</label> <br>
 
+			<hr>
 			Pdf erstellen:<br>
 			<input type = "text" id = "title" value = "test">
 			<label for = "title">Titel</label> <br>
