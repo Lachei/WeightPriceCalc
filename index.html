@@ -194,6 +194,8 @@ pre{
     border-bottom-left-radius: 0;
 }
 </style>
+<script src="jspdf.js"></script>
+<script src="jspdf_autotable.js"></script>
 <script>
 let selected = 'p';
 let price_types = ["st|€/st", "g|€/kg", "kg|€/kg", "h|€/h"];
@@ -289,6 +291,56 @@ function price_type_change(val){
 	document.getElementById("price_kg").innerHTML = val.split("|")[1];
 }
 
+function export_pdf(base_name){
+	pdf = new jsPDF();
+	pdf.text(base_name, 105, 10, 'center');
+	
+	let everything_summed = 0;
+	let table_data = {head: [['Komplette Liste','',''],['Menge', 'Preis pro Einheit', 'Gesamt']],
+		body: []};
+	let unique_amount = {};
+	let unique_price = {};
+	let unique_types = {};
+		
+	let children = document.getElementById("left").children;
+	for(const child of children){
+		let price_type = child.getAttribute("price_type");
+		let amount = child.getAttribute("amount");
+		let price = Number(child.getAttribute("price"));
+		let total_price = Number(child.getAttribute("total_price"));
+		values = [amount + price_type.split("|")[0], 
+				price.toFixed(2) + price_type.split("|")[1],
+				total_price.toFixed(2) + "€"];
+		table_data.body.push(values);
+		
+		let price_t = price.toFixed(2) + price_type.split("|")[1];
+		if(price_t in unique_amount)
+			unique_amount[price_t] += Number(amount);
+		else
+			unique_amount[price_t] = Number(amount);
+		unique_price[price_t] = price;
+		unique_types[price_t] = price_type.split("|")[0];
+		
+		everything_summed += Number(total_price);
+	}
+	table_data.body.push(['','Total',everything_summed.toFixed(2) + "€"]);
+		
+	unique_table_data = {head: [['Reduzierte Liste','',''],['Menge', 'Preis pro Einheit', 'Gesamt']],
+		body: []};
+		
+	for(const [price, amount] of Object.entries(unique_amount)){
+		unique_table_data.body.push([amount + unique_types[price],
+					price,
+					(unique_price[price] * amount).toFixed(2) + "€"]);
+	}
+	unique_table_data.body.push(['','Total',everything_summed.toFixed(2) + "€"]);
+	
+	pdf.autoTable(table_data);
+	pdf.autoTable(unique_table_data);
+	
+	pdf.save(base_name + ".pdf");
+}
+
 document.addEventListener('keydown', (event) => {
 	const key_name = event.key;
 	if(key_name == "Enter")
@@ -351,9 +403,9 @@ document.addEventListener('keydown', (event) => {
 
 			<hr>
 			Pdf erstellen:<br>
-			<input type = "text" id = "title" value = "test">
+			<input type = "text" id = "pdf_title" value = "test">
 			<label for = "title">Titel</label> <br>
-			<button type = "button">Erstellen</button>
+			<button type = "button" onclick = "export_pdf(document.getElementById('pdf_title').value)">Erstellen</button>
 		</div>
 	</div>
 	<div id = "zero" class = "number" onclick = "input_number(0)">
