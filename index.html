@@ -21,9 +21,10 @@ pre{
 	display: grid;
 	grid-template-rows: repeat(5, 20%);
 	grid-template-columns: 40% 30% 10% 10% 10%;
-	grid-template-areas: "left cur_gram seven eight nine" "left price_kg four five six" "left middle one two three" "left middle zero zero dot" "sum middle back enter enter";
+	grid-template-areas: "left cur_gram seven eight nine" "left price_kg four five six" "left fullscreen one two three" "left middle zero zero dot" "sum middle back enter enter";
 	row-gap: 5px;
 	column-gap: 5px;
+	background-color: white;
 }
 #left{
 	grid-area: left;
@@ -37,6 +38,9 @@ pre{
 }
 #price_kg{
 	grid-area: price_kg;
+}
+#fullscreen{
+	grid-area: fullscreen;
 }
 #middle{
 	grid-area: middle;
@@ -369,6 +373,21 @@ document.addEventListener('keydown', (event) => {
 	else if(key_name == "ArrowDown")
 		select('p');
  })
+ 
+function requestFullScreen() {
+	var element = document.body;
+    // Supports most browsers and their versions.
+    var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
+
+    if (requestMethod) { // Native full screen.
+        requestMethod.call(element);
+    } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
+        var wscript = new ActiveXObject("WScript.Shell");
+        if (wscript !== null) {
+            wscript.SendKeys("{F11}");
+        }
+    }
+}
 </script>
 <title>Mengenrechner</title>
 </head>
@@ -385,6 +404,9 @@ document.addEventListener('keydown', (event) => {
 	</div>
 	<div id = "price_kg" class = "price_select selected" onclick = "select('p')">
 	€/st
+	</div>
+	<div id = "fullscreen">
+	<p><button type = "button" onclick = "requestFullScreen()">Vollbild</button></p>
 	</div>
 	<div id = "middle" class>
 		<input type = "checkbox" id="menu_header" class = "toggle"><label for="menu_header" class = "lbl-toggle">
