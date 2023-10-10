@@ -183,7 +183,7 @@ pre{
 }
 
 .toggle:checked + .lbl-toggle + .collapsible-content {
-    max-height: 30vh;
+    max-height: 90vh;
 }
 
 .toggle:checked + .lbl-toggle::before {
@@ -234,6 +234,8 @@ function price_div(price, grams){
 }
 
 function input_number(x){
+	if (selected == 'p' && x == '.')	// ignore . for price (is automatically added)
+		return;
 	let price_string = selected == 'p' ? cur_price: cur_grams;
 	if(x == 'e'){
 		let el = document.getElementById("left");
@@ -256,6 +258,12 @@ function input_number(x){
 	}
 	else{
 		price_string += x;
+	}
+
+	if (selected == 'p' && price_string.length > 2){
+		price_string = price_string.replace(/\./g, '');
+		let split_pos = price_string.length - 2;
+		price_string = price_string.substring(0, split_pos) + '.'  + price_string.substring(split_pos);
 	}
 	
 	if(selected == 'p'){
