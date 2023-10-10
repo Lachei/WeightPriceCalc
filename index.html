@@ -86,7 +86,7 @@ pre{
 	grid-area: enter;
 	background-color: lightgreen;
 }
-#enter:hover{
+#enter:click{
 	background-color: green;
 }
 .number{
@@ -98,8 +98,10 @@ pre{
 	-ms-user-select: none; /* IE 10 and IE 11 */
 	user-select: none; /* Standard syntax */
 	touch-action: none;
+        user-drag: none;
+        -webkit-user-drag: none;
 }
-.number:hover {
+.number:click {
 	background-color: gray;
 }
 .price_select{
@@ -124,7 +126,7 @@ pre{
 	margin-bottom: 5px;
 	cursor: pointer;
 }
-.price_el:hover{
+.price_el:click{
 	background-color: gray;
 }
 #sum{
@@ -173,7 +175,7 @@ pre{
     padding: 0rem 1rem;
     max-height: 0px;
     overflow: scroll;
-	font-size: 40%;
+	font-size: 30%;
 
     transition: max-height .25s ease-in-out;
 }
