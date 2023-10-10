@@ -185,7 +185,7 @@ pre{
 }
 
 .toggle:checked + .lbl-toggle + .collapsible-content {
-    max-height: 90vh;
+    max-height: 40vh;
 }
 
 .toggle:checked + .lbl-toggle::before {
@@ -200,6 +200,8 @@ pre{
 <script src="jspdf.js"></script>
 <script src="jspdf_autotable.js"></script>
 <script>
+window.onbeforeunload = function() {return false;};
+
 let selected = 'p';
 let price_types = ["st|€/st", "g|€/kg", "kg|€/kg", "h|€/h"];
 let price_type = price_types[0];
