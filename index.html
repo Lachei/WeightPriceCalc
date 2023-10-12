@@ -256,7 +256,7 @@ function input_number(x){
 		}
 		if(document.getElementById("clear_price").checked){
 			cur_price = "";
-			document.getElementById("price_kg").innerHTML = cur_price + " " + price_type.split("|")[1];
+			document.getElementById("price_kg").innerHTML = cur_price + "0.00 " + price_type.split("|")[1];
 		}
 		price_string = selected == 'p' ? cur_price: cur_grams;
 		select(document.getElementById("default_select").value);
@@ -269,8 +269,10 @@ function input_number(x){
 		price_string += x;
 	}
 
-	if (selected == 'p' && price_string.length > 2){
+	if (selected == 'p'){
 		price_string = price_string.replace(/\./g, '');
+		price_string = price_string.replace(/^0+/, '');
+		price_string = price_string.padStart(Math.max(price_string.length, 3), "0");
 		let split_pos = price_string.length - 2;
 		price_string = price_string.substring(0, split_pos) + '.'  + price_string.substring(split_pos);
 	}
@@ -404,7 +406,7 @@ function requestFullScreen() {
 	st
 	</div>
 	<div id = "price_kg" class = "price_select selected" onclick = "select('p')">
-	€/st
+	0.00 €/st
 	</div>
 	<div id = "fullscreen">
 	<p><button type = "button" onclick = "requestFullScreen()">Vollbild</button></p>
