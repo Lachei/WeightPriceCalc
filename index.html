@@ -394,9 +394,9 @@ function requestFullScreen() {
 
 function preset(v){
 	console.log(v);
-	let def_sel = body.getElementById("default_select");
-	let reset_entity = body.getElementById("clear_entity");
-	let reset_price = body.getElementById("clear_price");
+	let def_sel = document.getElementById("default_select");
+	let reset_entity = document.getElementById("clear_entity");
+	let reset_price = document.getElementById("clear_price");
 	if(v == "inventur") {
 		price_type_change("st|€/st");
 		def_sel.value = "p";
