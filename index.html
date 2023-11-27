@@ -394,6 +394,21 @@ function requestFullScreen() {
 
 function preset(v){
 	console.log(v);
+	let def_sel = body.getElementById("default_select");
+	let reset_entity = body.getElementById("clear_entity");
+	let reset_price = body.getElementById("clear_price");
+	if(v == "inventur") {
+		price_type_change("st|€/st");
+		def_sel.value = "p";
+		reset_entity.checked = true;
+		reset_price.checked = true;
+	}
+	if(v == "lebensmittel") {
+		price_type_change("g|€/kg");
+		def_sel.value = "g";
+		reset_entity.checked = true;
+		reset_price.checked = false;
+	}
 }
 </script>
 <title>Mengenrechner</title>
