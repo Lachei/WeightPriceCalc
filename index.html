@@ -391,6 +391,10 @@ function requestFullScreen() {
         }
     }
 }
+
+function preset(v){
+	console.log(v);
+}
 </script>
 <title>Mengenrechner</title>
 </head>
@@ -416,8 +420,9 @@ function requestFullScreen() {
 			Men&uuml;/Settings
 		</label>
 		<div class="collapsible-content">
-			<p><select id = "predone_settings">
+			<p><select id = "predone_settings" onchange="preset(this.value)">
 				<option value="inventur">Inventur</option>
+				<option value="lebensmittel">Lebensmittel</option>
 				<!-- <option value="markt">Christkindlmarkt</option> -->
 			</select><label for = "predone_settings">Voreinstellungen</label></p>
 			<hr>
