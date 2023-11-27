@@ -308,7 +308,8 @@ function select(e){
 function price_type_change(val){
 	price_type = val;
 	document.getElementById("cur_gram").innerHTML  = val.split("|")[0];
-	document.getElementById("price_kg").innerHTML = val.split("|")[1];
+	document.getElementById("price_kg").innerHTML = "0.00 " + val.split("|")[1];
+	document.getElementById("price_type").value = val;
 }
 
 function export_pdf(base_name){
@@ -397,17 +398,20 @@ function preset(v){
 	let def_sel = document.getElementById("default_select");
 	let reset_entity = document.getElementById("clear_entity");
 	let reset_price = document.getElementById("clear_price");
+	let rounding = document.getElementById("round");
 	if(v == "inventur") {
 		price_type_change("st|€/st");
 		def_sel.value = "p";
 		reset_entity.checked = true;
 		reset_price.checked = true;
+		round.checked = false;
 	}
 	if(v == "lebensmittel") {
 		price_type_change("g|€/kg");
 		def_sel.value = "g";
 		reset_entity.checked = true;
 		reset_price.checked = false;
+		round.checked = true;
 	}
 }
 </script>
